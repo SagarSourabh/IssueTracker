@@ -13,13 +13,24 @@ namespace IssueTracker.API.Controllers
     {
 
         IRepository<Project> _repo = new ProjectRepository();
-
-
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        
         // GET api/<controller>
-        public IEnumerable<Project> GetAll()
+        public HttpResponseMessage GetAll()
         {
-            var projectList = _repo.List;
-            return projectList.ToList();
+            try
+            {
+                log.Info("GetAll method starts");
+                var projectList = _repo.List;
+                var message = Request.CreateResponse(HttpStatusCode.OK, projectList.ToList());
+                log.Info("GetAll method ends");
+                return message;
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+            }
+
         }
 
 
