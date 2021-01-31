@@ -13,9 +13,11 @@ namespace IssueTracker.Respository
 
         IEnumerable<Project> IRepository<Project>.List => AutoMapProperty.MapPropertyForList<Project, ProjectDetail>(dbContext.ProjectDetails.ToList());
 
+
         public void Add(Project entity)
         {
             //dbContext.ChangeTracker.Entries().Where(e => e.State == System.Data.Entity.EntityState.Modified)
+          
             var projEntity = AutoMapProperty.MapProperty<ProjectDetail, Project>(entity);
             dbContext.ProjectDetails.Add(projEntity);
             dbContext.SaveChanges();
@@ -23,17 +25,19 @@ namespace IssueTracker.Respository
 
         public void Delete(Project entity)
         {
-            
+            var dbEntity = AutoMapProperty.MapProperty<ProjectDetail, Project>(entity);
+            dbContext.ProjectDetails.Remove(dbEntity);
+            dbContext.SaveChanges();
         }
 
-        public Project FindById(int Id)
+        public Project FindById(string Id)
         {
             return null;
         }
 
         public void Update(Project entity)
         {
-           
+
         }
     }
 }

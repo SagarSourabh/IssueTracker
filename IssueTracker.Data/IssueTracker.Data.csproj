@@ -89,6 +89,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExceptionLog.cs">
+      <DependentUpon>IssueTrackerEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="Issue.cs">
       <DependentUpon>IssueTrackerEntities.tt</DependentUpon>
     </Compile>

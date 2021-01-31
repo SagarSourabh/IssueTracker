@@ -18,5 +18,6 @@ namespace IssueTracker.Data
         public string ProjectName { get; set; }
         public string ProjectDesc { get; set; }
         public Nullable<int> Status { get; set; }
+        public Nullable<System.Guid> ProjectManagerID { get; set; }
     }
 }

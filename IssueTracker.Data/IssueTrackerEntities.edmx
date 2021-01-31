@@ -5,6 +5,18 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="IssueTrackerDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'IssueTrackerDB.dbo.ExceptionLog' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ExceptionLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ErrorMessage" Type="nvarchar" MaxLength="3000" />
+          <Property Name="ErrorProcedure" Type="nvarchar" MaxLength="100" />
+          <Property Name="LoggedUser" Type="uniqueidentifier" />
+          <Property Name="CreatedOn" Type="datetime" />
+        </EntityType>
         <EntityType Name="Issues">
           <Key>
             <PropertyRef Name="Id" />
@@ -12,6 +24,7 @@
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="IssueTitle" Type="nvarchar" MaxLength="1000" />
           <Property Name="IssueDesc" Type="nvarchar" MaxLength="2000" />
+          <Property Name="ProjectID" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Priority" Type="int" />
           <Property Name="Status" Type="int" />
           <Property Name="RaisedBy" Type="nvarchar" MaxLength="50" />
@@ -39,6 +52,7 @@
           <Property Name="ProjectName" Type="varchar" MaxLength="1000" />
           <Property Name="ProjectDesc" Type="varchar" MaxLength="2000" />
           <Property Name="Status" Type="int" />
+          <Property Name="ProjectManagerID" Type="uniqueidentifier" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -54,11 +68,41 @@
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="50" />
           <Property Name="Status" Type="int" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'IssueTrackerDB.dbo.vw_Project_Issues' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="vw_Project_Issues">
+          <Property Name="IssueTitle" Type="nvarchar" MaxLength="1000" />
+          <Property Name="IssueDesc" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Priority" Type="int" />
+          <Property Name="Status" Type="int" />
+          <Property Name="Name" Type="nvarchar" MaxLength="500" />
+          <Property Name="RaisedOn" Type="datetime" />
+          <Property Name="projectname" Type="varchar" MaxLength="1000" />
+        </EntityType>-->
+        <Function Name="SP_CREATE_USER" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Name" Type="nvarchar" Mode="In" />
+          <Parameter Name="Email" Type="nvarchar" Mode="In" />
+          <Parameter Name="Role" Type="int" Mode="In" />
+          <Parameter Name="UserName" Type="nvarchar" Mode="In" />
+          <Parameter Name="UserPass" Type="nvarchar" Mode="In" />
+          <Parameter Name="AssignProject" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="CreatedById" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="Status" Type="int" Mode="In" />
+        </Function>
         <EntityContainer Name="IssueTrackerDBModelStoreContainer">
           <EntitySet Name="Issues" EntityType="Self.Issues" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Logins" EntityType="Self.Logins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProjectDetails" EntityType="Self.ProjectDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ExceptionLog" EntityType="Self.ExceptionLog" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [ExceptionLog].[ID] AS [ID], 
+    [ExceptionLog].[ErrorMessage] AS [ErrorMessage], 
+    [ExceptionLog].[ErrorProcedure] AS [ErrorProcedure], 
+    [ExceptionLog].[LoggedUser] AS [LoggedUser], 
+    [ExceptionLog].[CreatedOn] AS [CreatedOn]
+    FROM [dbo].[ExceptionLog] AS [ExceptionLog]</DefiningQuery>
+          </EntitySet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -81,6 +125,7 @@
           <Property Name="ResolvedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="CreatedOn" Type="DateTime" Precision="3" />
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ProjectID" Type="Guid" Nullable="false" />
         </EntityType>
         <EntityType Name="Login">
           <Key>
@@ -109,6 +154,17 @@
           <EntitySet Name="Logins" EntityType="Self.Login" />
           <EntitySet Name="Users" EntityType="Self.User" />
           <EntitySet Name="ProjectDetails" EntityType="IssueTrackerDBModel.ProjectDetail" />
+          <EntitySet Name="ExceptionLogs" EntityType="IssueTrackerDBModel.ExceptionLog" />
+          <FunctionImport Name="SP_CREATE_USER">
+            <Parameter Name="Name" Mode="In" Type="String" />
+            <Parameter Name="Email" Mode="In" Type="String" />
+            <Parameter Name="Role" Mode="In" Type="Int32" />
+            <Parameter Name="UserName" Mode="In" Type="String" />
+            <Parameter Name="UserPass" Mode="In" Type="String" />
+            <Parameter Name="AssignProject" Mode="In" Type="Guid" />
+            <Parameter Name="CreatedById" Mode="In" Type="Guid" />
+            <Parameter Name="Status" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="ProjectDetail">
           <Key>
@@ -118,6 +174,17 @@
           <Property Name="ProjectName" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
           <Property Name="ProjectDesc" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="Int32" />
+          <Property Name="ProjectManagerID" Type="Guid" />
+        </EntityType>
+        <EntityType Name="ExceptionLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="ErrorMessage" Type="String" MaxLength="3000" FixedLength="false" Unicode="true" />
+          <Property Name="ErrorProcedure" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="LoggedUser" Type="Guid" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -128,6 +195,7 @@
           <EntitySetMapping Name="Issues">
             <EntityTypeMapping TypeName="IssueTrackerDBModel.Issue">
               <MappingFragment StoreEntitySet="Issues">
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="IssueTitle" ColumnName="IssueTitle" />
                 <ScalarProperty Name="IssueDesc" ColumnName="IssueDesc" />
@@ -171,6 +239,7 @@
           <EntitySetMapping Name="ProjectDetails">
             <EntityTypeMapping TypeName="IssueTrackerDBModel.ProjectDetail">
               <MappingFragment StoreEntitySet="ProjectDetails">
+                <ScalarProperty Name="ProjectManagerID" ColumnName="ProjectManagerID" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="ProjectDesc" ColumnName="ProjectDesc" />
                 <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
@@ -178,6 +247,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ExceptionLogs">
+            <EntityTypeMapping TypeName="IssueTrackerDBModel.ExceptionLog">
+              <MappingFragment StoreEntitySet="ExceptionLog">
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="LoggedUser" ColumnName="LoggedUser" />
+                <ScalarProperty Name="ErrorProcedure" ColumnName="ErrorProcedure" />
+                <ScalarProperty Name="ErrorMessage" ColumnName="ErrorMessage" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_CREATE_USER" FunctionName="IssueTrackerDBModel.Store.SP_CREATE_USER" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

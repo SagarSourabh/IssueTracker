@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Respository", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.API", "IssueTracker.API\IssueTracker.API.csproj", "{31E20B92-C248-4721-A461-C164F87775E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Test", "IssueTracker.Test\IssueTracker.Test.csproj", "{1FF03F1D-1E0D-46FA-80C9-3D3348A6F7CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{31E20B92-C248-4721-A461-C164F87775E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31E20B92-C248-4721-A461-C164F87775E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31E20B92-C248-4721-A461-C164F87775E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FF03F1D-1E0D-46FA-80C9-3D3348A6F7CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FF03F1D-1E0D-46FA-80C9-3D3348A6F7CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FF03F1D-1E0D-46FA-80C9-3D3348A6F7CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FF03F1D-1E0D-46FA-80C9-3D3348A6F7CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

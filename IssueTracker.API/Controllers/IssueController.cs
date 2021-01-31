@@ -11,14 +11,9 @@ namespace IssueTracker.API.Controllers
 {
     public class IssueController : ApiController
     {
-        IRepository<Project> _repo = new ProjectRepository();
+      
 
-        public IEnumerable<Project> GetAll()
-        {
-            var projectList = _repo.List;
-            return projectList.ToList();
-        }
-
+      
         // GET api/<controller>/5
         public string Get(int id)
         {

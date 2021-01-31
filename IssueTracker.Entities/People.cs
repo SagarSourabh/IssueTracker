@@ -6,7 +6,7 @@ using System.Web;
 
 namespace IssueTracker.Entities
 {
-    public class People
+    public class People : IEntity
     {
         public Guid PersonId { get; set; }
 

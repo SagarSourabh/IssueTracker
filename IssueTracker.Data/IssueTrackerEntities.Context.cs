@@ -12,6 +12,8 @@ namespace IssueTracker.Data
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class IssueTrackerDBEntities : DbContext
     {
@@ -29,5 +31,43 @@ namespace IssueTracker.Data
         public virtual DbSet<Login> Logins { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<ProjectDetail> ProjectDetails { get; set; }
+        public virtual DbSet<ExceptionLog> ExceptionLogs { get; set; }
+    
+        public virtual int SP_CREATE_USER(string name, string email, Nullable<int> role, string userName, string userPass, Nullable<System.Guid> assignProject, Nullable<System.Guid> createdById, Nullable<int> status)
+        {
+            var nameParameter = name != null ?
+                new ObjectParameter("Name", name) :
+                new ObjectParameter("Name", typeof(string));
+    
+            var emailParameter = email != null ?
+                new ObjectParameter("Email", email) :
+                new ObjectParameter("Email", typeof(string));
+    
+            var roleParameter = role.HasValue ?
+                new ObjectParameter("Role", role) :
+                new ObjectParameter("Role", typeof(int));
+    
+            var userNameParameter = userName != null ?
+                new ObjectParameter("UserName", userName) :
+                new ObjectParameter("UserName", typeof(string));
+    
+            var userPassParameter = userPass != null ?
+                new ObjectParameter("UserPass", userPass) :
+                new ObjectParameter("UserPass", typeof(string));
+    
+            var assignProjectParameter = assignProject.HasValue ?
+                new ObjectParameter("AssignProject", assignProject) :
+                new ObjectParameter("AssignProject", typeof(System.Guid));
+    
+            var createdByIdParameter = createdById.HasValue ?
+                new ObjectParameter("CreatedById", createdById) :
+                new ObjectParameter("CreatedById", typeof(System.Guid));
+    
+            var statusParameter = status.HasValue ?
+                new ObjectParameter("Status", status) :
+                new ObjectParameter("Status", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_CREATE_USER", nameParameter, emailParameter, roleParameter, userNameParameter, userPassParameter, assignProjectParameter, createdByIdParameter, statusParameter);
+        }
     }
 }

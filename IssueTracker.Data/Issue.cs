@@ -27,5 +27,6 @@ namespace IssueTracker.Data
         public string ResolvedBy { get; set; }
         public Nullable<System.DateTime> CreatedOn { get; set; }
         public string CreatedBy { get; set; }
+        public System.Guid ProjectID { get; set; }
     }
 }
