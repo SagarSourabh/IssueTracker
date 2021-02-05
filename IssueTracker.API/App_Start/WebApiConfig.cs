@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace IssueTracker.API
 {
@@ -23,6 +24,9 @@ namespace IssueTracker.API
             //This will restrict response to only json type
             config.Formatters.Remove(config.Formatters.XmlFormatter);
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("text/html"));
+
+            EnableCorsAttribute cors = new EnableCorsAttribute("*","*","*");
+            config.EnableCors(cors);
         }
     }
 }
